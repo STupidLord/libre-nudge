@@ -1,0 +1,28 @@
+# Convert EOL to LF for consistency.
+*               text=auto       eol=lf
+
+# C++ Recognition
+*.cpp           text            diff=cpp
+*.hpp           text            diff=cpp
+*.cppm          text            diff=cpp
+
+# Markdown
+*.md            linguist-documentation
+
+# Graphics
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.tif           binary
+*.tiff          binary
+*.ico           binary
+
+# Script files
+# Windows scripts should preserve CRLF
+*.bat           text            eol=crlf
+*.cmd           text            eol=crlf
+#*.ps1           text            eol=crlf # PwSh scripts are cross platofrm (ish)
+
+# Vendored code
+vendor/** linguist-vendored

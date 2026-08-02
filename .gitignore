@@ -1,0 +1,13 @@
+# Build metadata
+.cache/
+/compile_commands.json
+
+# Build artifacts
+build/
+out/
+## Installer artifacts
+msi/build/
+msi/obj/
+msi/*.cab
+msi/*.wixpdb
+msi/*.msi

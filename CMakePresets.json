@@ -1,0 +1,41 @@
+{
+    "version": 9,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 30,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "windows-base",
+            "displayName": "Windows",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "C:/Program Files/LibreNudge",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "windows-clang",
+            "inherits": "windows-base",
+            "displayName": "Clang (Windows)",
+            "description": "Using clang++.exe",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-clang-build",
+            "configurePreset": "windows-clang"
+        }
+    ]
+}
