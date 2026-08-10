@@ -45,14 +45,6 @@ namespace internal {
         }
 
         void skip(int i) { pos += i; }
-
-        bool skip_if(internal::token_type type) {
-            if (has_next() && tokens[pos].token == type) {
-                pos++;
-                return true;
-            }
-            return false;
-        }
     };
 
     CORE_API std::vector<token> tokenize(std::ifstream& file);
