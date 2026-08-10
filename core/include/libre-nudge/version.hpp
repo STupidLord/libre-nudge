@@ -5,7 +5,7 @@
 
 #define LNB_V_MAJOR 0
 #define LNB_V_MINOR 2
-#define LNB_V_PATCH 0
+#define LNB_V_PATCH 1
 
 #define LNB_TM_STR  "Libre Nudge (TM) Backend"
 #define LNB_TMV_STR LNB_TM_STR " Version {}.{}.{}"

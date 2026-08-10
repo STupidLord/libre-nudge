@@ -18,7 +18,7 @@ set_property(TARGET core PROPERTY PDB_OUTPUT_DIRECTORY     ${CMAKE_BINARY_DIR}/c
 
 set_target_properties(core
     PROPERTIES
-        VERSION 0.2.0
+        VERSION 0.2.1
         SOVERSION 0
 )
 

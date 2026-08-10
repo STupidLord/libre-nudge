@@ -7,6 +7,7 @@
 
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <fstream>
 #include <iterator>
@@ -15,84 +16,89 @@ namespace fs = std::filesystem;
 
 namespace core {
 namespace {
-identifier is_capturable(std::string_view string) {
+identifier identifier_type(std::string_view string) {
     if (string == "show_on_map")
         return identifier::count;
     else if (string == "only_costal")
         return identifier::coastal;
     else if (string == "centered")
         return identifier::centered;
+    else if (string == "province_max")
+        return identifier::provincial;
+    else if (string == "spawn_point")
+        return identifier::spawn_point;
     return identifier::unknown;
 }
 
-// Technically down one indent by splitting this...
-// could be split more, probably.
+void apply_building_property(building& b,
+                             const identifier id,
+                             std::string_view value) {
+    bool is_yes = (value == "yes");
+
+    switch (id) {
+    case identifier::count: b.count = std::stoi(std::string(value)); break;
+    case identifier::coastal: b.coastal = is_yes; break;
+    case identifier::centered: b.centered = is_yes; break;
+    case identifier::no_auto_nudge: b.no_auto_nudge = is_yes; break;
+    case identifier::provincial: b.provincial = true; break;
+    case identifier::spawn_point: b.spawn_point = value; break;
+    default: break;
+    }
+}
+
+building parse_building(internal::token_cursor& tokc, std::string_view name) {
+    building b{std::string(name)};
+    int sub_brakets = 0;
+
+    while (tokc.has_next()) {
+        auto tok = tokc.consume();
+
+        if (tok.token == internal::token_type::identifier
+         && tokc.block_opening()) {
+            sub_brakets++;
+            tokc.skip(2);
+            continue;
+        } else if (tok.token == internal::token_type::identifier
+                && identifier_type(tok.value) != identifier::unknown) {
+            identifier id = identifier_type(tok.value);
+            apply_building_property(b, id, tokc.peek_ahead(1).value);
+            continue;
+        } else if (tok.token == internal::token_type::left_bracket) {
+            sub_brakets++;
+        } else if (tok.token == internal::token_type::right_bracket
+                && sub_brakets > 0) {
+            sub_brakets--;
+            continue;
+        } else if (tok.token == internal::token_type::right_bracket) break;
+    }
+
+    return b;
+}
+
 auto load_buildings_from_tokens(std::vector<internal::token>& tokens)
      -> std::vector<building> {
     std::vector<building> buildings;
-
-    int skip_foward = 0;
+    internal::token_cursor tokc{tokens};
     bool in_buildings = false;
-    bool in_building = false;
-    building current_building{};
-    identifier input = identifier::unknown;
-    bool input_bool = false;
-    int sub_brackets = 0;
-    // God I hate this stuff
-    // TODO: Clean this up
-    for (const internal::token& token : tokens) {
-        if (skip_foward > 0) {
-            skip_foward--;
-            continue;
-        }
+
+    while (tokc.has_next()) {
+        auto tok = tokc.consume();
+
         if (!in_buildings
-            && token.token == internal::token_type::identifier
-            && token.value == "buildings") {
+         && tok.token != internal::token_type::identifier) {
+            continue;
+        } else if (!in_buildings
+                && tok.token == internal::token_type::identifier
+                && tok.value == "buildings") {
             in_buildings = true;
-        } else if (in_buildings
-                    && token.token == internal::token_type::identifier
-                    && !in_building) {
-            skip_foward = 2;
-            in_building = true;
-            current_building.reset_building();
-            current_building.type = token.value;
-        } else if (in_building
-                    && token.token == internal::token_type::identifier) {
-            if (input != identifier::unknown) {
-                if (token.value == "yes") input_bool = true;
-                else input_bool = false;
-
-                switch (input) {
-                case identifier::count:
-                    current_building.count = std::stoi(token.value);
-                    break;
-                case identifier::coastal:
-                    current_building.coastal = input_bool;
-                    break;
-                case identifier::centered:
-                    current_building.centered = input_bool;
-                    break;
-                case identifier::no_auto_nudge:
-                    current_building.no_auto_nudge = input_bool;
-                    break;
-                case identifier::unknown:
-                    break;
-                }
-
-                input = identifier::unknown;
-            } else if (identifier id = is_capturable(token.value);
-                        id != identifier::unknown) {
-                input = id;
-            }
-        } else if (in_building
-                    && token.token == internal::token_type::left_bracket) {
-            sub_brackets++;
-        } else if (token.token == internal::token_type::right_bracket) {
-            if (sub_brackets > 0) sub_brackets--;
-            else if (in_building) {
-                in_building = false;
-                buildings.push_back(current_building);
-            } else if (in_buildings) in_buildings = false;
+            continue;
+        } else if (tok.token == internal::token_type::right_bracket) {
+            in_buildings = false; // Probably not needed, but doing it anyways
+            break;
+        } else if (tok.token == internal::token_type::identifier
+                && tokc.block_opening()) {
+            tokc.skip(2);
+            buildings.push_back(parse_building(tokc, tok.value));
         }
     }
 

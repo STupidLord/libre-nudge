@@ -22,6 +22,38 @@ namespace internal {
         token_type token;
         std::string value;
     };
+    struct token_cursor {
+        const std::vector<token>& tokens;
+        size_t pos = 0;
+
+        [[nodiscard]]
+        bool has_next() const { return pos < tokens.size(); }
+        [[nodiscard]]
+        const token& peek() const { return tokens[pos]; }
+        // A little confusing, but this is one
+        // ahead because of consume()
+        [[nodiscard]]
+        const token& peek_ahead(int i) const { return tokens[pos+i]; }
+        [[nodiscard]]
+        const token& consume() { return tokens[pos++]; }
+        [[nodiscard]]
+        const bool block_opening() const {
+            return (
+                peek().token == token_type::equals
+             && peek_ahead(1).token == token_type::left_bracket
+            );
+        }
+
+        void skip(int i) { pos += i; }
+
+        bool skip_if(internal::token_type type) {
+            if (has_next() && tokens[pos].token == type) {
+                pos++;
+                return true;
+            }
+            return false;
+        }
+    };
 
     CORE_API std::vector<token> tokenize(std::ifstream& file);
     // Mostly for visualizing tokenization

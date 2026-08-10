@@ -17,7 +17,9 @@ enum class identifier {
     count,
     coastal,
     centered,
-    no_auto_nudge
+    no_auto_nudge,
+    provincial,
+    spawn_point
 };
 
 struct building { // Spawn points count as buildings :hmmdevious:
@@ -26,6 +28,8 @@ struct building { // Spawn points count as buildings :hmmdevious:
     bool        coastal       = false;
     bool        centered      = false;
     bool        no_auto_nudge = false;
+    bool        provincial    = false;
+    std::string spawn_point   = "";
 
     void        reset_building() {
         *this = building{};
