@@ -81,13 +81,15 @@ int main(int argc, char* argv[]) {
                      " Coastal: {}\n"
                      " Centered: {}\n"
                      " No auto nudge: {}\n"
-                     " Provincial: {}",
+                     " Provincial: {}\n"
+                     " Spawn point: {}",
                      building.type,
                      building.count,
                      building.coastal,
                      building.centered,
                      building.no_auto_nudge,
-                     building.provincial);
+                     building.provincial,
+                     building.spawn_point);
     }
 
     // std::ifstream ifile(ifilep);

@@ -29,7 +29,7 @@ struct building { // Spawn points count as buildings :hmmdevious:
     bool        centered      = false;
     bool        no_auto_nudge = false;
     bool        provincial    = false;
-    std::string spawn_point   = "";
+    std::string spawn_point   = "none";
 
     void        reset_building() {
         *this = building{};
