@@ -1,0 +1,9 @@
+build/
+out/
+.vscode/
+.git/
+.cache/
+.notes/
+compile_commands.json
+LICENSE
+README.md

@@ -191,7 +191,7 @@ auto load_buildings(std::filesystem::path game_directory)
      -> std::vector<building> {
     std::vector<building> buildings;
     fs::path buildings_path = fs::weakly_canonical(game_directory)
-                              /= "common/buildings";
+                           /= "common/buildings";
 
     for (const fs::directory_entry& entry
          : fs::directory_iterator(buildings_path)) {

@@ -18,7 +18,7 @@ set_property(TARGET core PROPERTY PDB_OUTPUT_DIRECTORY     ${CMAKE_BINARY_DIR}/c
 
 set_target_properties(core
     PROPERTIES
-        VERSION 0.2.1
+        VERSION 0.2.2
         SOVERSION 0
 )
 
@@ -29,12 +29,14 @@ target_sources(core
         "src/entry.cpp"
         "src/parse.cpp"
         "src/buildings.cpp"
+        "src/definition.cpp"
     PRIVATE
         FILE_SET HEADERS
         FILES
             "include/libre-nudge/version.hpp"
             "include/parse.hpp"
             "include/buildings.hpp"
+            "include/definition.hpp"
 )
 
 if(WIN32)

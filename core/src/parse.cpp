@@ -22,6 +22,7 @@ bool is_comment(char ch) {
     return false;
 }
 }
+
 std::vector<token> tokenize(std::ifstream& file) {
     std::vector<token> tokens;
     char ch;

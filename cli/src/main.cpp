@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <filesystem>
 #include <print>
+#include <ranges>
+#include <utility>
 
 #include "version.hpp"
 #include "common.hpp"
@@ -11,6 +13,7 @@
 #include "ini.hpp"
 
 #include <buildings.hpp>
+#include <definition.hpp>
 #include <libre-nudge/version.hpp>
 
 int main(int argc, char* argv[]) {
@@ -74,22 +77,36 @@ int main(int argc, char* argv[]) {
 
     // core::load_buildings(config->config.game_directory);
 
-    auto buildings = core::load_buildings(config->config.game_directory);
-    for (auto& building : buildings) {
-        std::println("Building: {}\n"
-                     " Count: {}\n"
-                     " Coastal: {}\n"
-                     " Centered: {}\n"
-                     " No auto nudge: {}\n"
-                     " Provincial: {}\n"
-                     " Spawn point: {}",
-                     building.type,
-                     building.count,
-                     building.coastal,
-                     building.centered,
-                     building.no_auto_nudge,
-                     building.provincial,
-                     building.spawn_point);
+    // auto buildings = core::load_buildings(config->config.game_directory);
+    // for (auto& building : buildings) {
+    //     std::println("Building: {}\n"
+    //                  " Count: {}\n"
+    //                  " Coastal: {}\n"
+    //                  " Centered: {}\n"
+    //                  " No auto nudge: {}\n"
+    //                  " Provincial: {}\n"
+    //                  " Spawn point: {}",
+    //                  building.type,
+    //                  building.count,
+    //                  building.coastal,
+    //                  building.centered,
+    //                  building.no_auto_nudge,
+    //                  building.provincial,
+    //                  building.spawn_point);
+    // }
+
+    auto provinces = core::parse_definition_csv(config->config.game_directory);
+    for (auto&& [index, p] : std::views::enumerate(provinces)) {
+        std::println("{}: rgb {},{},{}; type {};"
+                     " coastal {}; terrain {}; continent {}",
+                     index,
+                     p.r,
+                     p.g,
+                     p.b,
+                     std::to_underlying(p.type),
+                     p.coastal,
+                     p.terrain,
+                     p.continent);
     }
 
     // std::ifstream ifile(ifilep);
