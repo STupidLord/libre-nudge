@@ -29,7 +29,7 @@
 #*.ps1           text            eol=crlf # PwSh scripts are cross platofrm (ish)
 
 # Vendored code
-vendor/** linguist-vendored
+**/vendor/** linguist-vendored
 
 # Generated
 build/**  linguist-generated

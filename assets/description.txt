@@ -1,0 +1,1 @@
+Libre Nudge is a open source (GPL-3.0-or-later) implementation of Paradox Development Studio's Nudge tool as seen in their game Hearts of Iron IV.

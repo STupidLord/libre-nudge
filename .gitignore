@@ -6,8 +6,5 @@
 build/
 out/
 ## Installer artifacts
-msi/build/
-msi/obj/
-msi/*.cab
-msi/*.wixpdb
-msi/*.msi
+*.msi
+*.exe
