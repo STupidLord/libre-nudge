@@ -1,4 +1,17 @@
 # Libre Nudge
+
+![C++](https://img.shields.io/badge/C%2B%2B-f34b7d?style=for-the-badge&logo=cplusplus)
+![LICENSE](https://img.shields.io/badge/LICENSE-GPL--3.0--or--later-orange?style=for-the-badge&logo=gplv3)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/STupidLord/libre-nudge?style=for-the-badge&logo=git)
+![GitHub last commit](https://img.shields.io/github/last-commit/STupidLord/libre-nudge?style=for-the-badge&logo=git)
+
+![GitHub contributors](https://img.shields.io/github/contributors/STupidLord/libre-nudge?style=for-the-badge&logo=github)
+![GitHub Issues](https://img.shields.io/github/issues/STupidLord/libre-nudge?style=for-the-badge&logo=github)
+![GitHub Issues](https://img.shields.io/github/issues-closed/STupidLord/libre-nudge?style=for-the-badge&logo=github&color=8250df)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/STupidLord/libre-nudge?style=for-the-badge&logo=github)
+![GitHub Closed Pull Requests](https://img.shields.io/github/issues-pr-closed/STupidLord/libre-nudge?style=for-the-badge&logo=github&color=8250df)
+
+
 A open source implementation of Hearts of Iron IV's Nudge tool!
 
 ## Goals of this project
