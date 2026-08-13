@@ -22,7 +22,7 @@ A open source implementation of Hearts of Iron IV's Nudge tool!
 3) Add additonal features the Nudge lacks
 
 ## Versioning
-It might vary well come off as confusing, but Libre Nudge has multiple different versioning numbers.
+It might very well come off as confusing, but Libre Nudge has multiple different versioning numbers.
 
 Currently there are three of these:
 - CLI version ([CMakeLists.txt](cli/CMakeLists.txt) and [version.hpp](cli/include/version.hpp))
