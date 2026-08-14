@@ -25,10 +25,10 @@ std::unique_ptr<image> image::load_image(std::filesystem::path path) {
     if (data == NULL) return nullptr;
 
     switch (n) {
-    case 4:  return std::make_unique<rgba_image>(x, y, data);
-    case 3:  return std::make_unique<rgb_image>(x, y, data);
-    case 2:  return std::make_unique<gsa_image>(x, y, data);
-    case 1:  return std::make_unique<gs_image>(x, y, data);
+    case 4:  return std::make_unique<rgba_image>(x, y, data, 4);
+    case 3:  return std::make_unique<rgb_image>(x, y, data, 3);
+    case 2:  return std::make_unique<gsa_image>(x, y, data, 2);
+    case 1:  return std::make_unique<gs_image>(x, y, data, 1);
     default: return nullptr;
     }
 }
@@ -49,10 +49,10 @@ std::unique_ptr<image> image::load_flipped_image(std::filesystem::path path) {
     std::unique_ptr<image> image;
 
     switch (n) {
-    case 4:  return std::make_unique<rgba_image>(x, y, data);
-    case 3:  return std::make_unique<rgb_image>(x, y, data);
-    case 2:  return std::make_unique<gsa_image>(x, y, data);
-    case 1:  return std::make_unique<gs_image>(x, y, data);
+    case 4:  return std::make_unique<rgba_image>(x, y, data, 4);
+    case 3:  return std::make_unique<rgb_image>(x, y, data, 3);
+    case 2:  return std::make_unique<gsa_image>(x, y, data, 2);
+    case 1:  return std::make_unique<gs_image>(x, y, data, 1);
     default: return nullptr;
     }
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 STupidLord
 
+#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <memory>
@@ -16,6 +17,7 @@
 #include <buildings.hpp>
 #include <definition.hpp>
 #include <image.hpp>
+#include <provinces.hpp>
 #include <libre-nudge/version.hpp>
 
 int main(int argc, char* argv[]) {
@@ -101,7 +103,7 @@ int main(int argc, char* argv[]) {
     //                  building.spawn_point);
     // }
 
-    // auto provinces = core::parse_definition_csv(config->config.game_directory);
+    auto provinces = core::parse_definition_csv(config->config.game_directory);
     // for (auto&& [index, p] : std::views::enumerate(provinces)) {
     //     std::println("{}: rgb {},{},{}; type {};"
     //                  " coastal {}; terrain {}; continent {}",
@@ -114,17 +116,44 @@ int main(int argc, char* argv[]) {
     //                  p.terrain,
     //                  p.continent);
     // }
+    auto provinces_map = core::load_province_map(config->config.game_directory,
+                                                 provinces);
+    // uint16_t id = provinces_map.at(1018 * 5632 + 2825);
+    // uint16_t id = provinces_map.at(1167 * 5632 + 3359);
+    // auto p = provinces.at(id);
+    int forest_count{};
+    for (auto [pos, pixel] : std::views::enumerate(provinces_map)) {
+        auto p = provinces.at(pixel);
+        if (p.terrain == "forest") {
+            forest_count++;
+            // std::println("{} {},{}: rgb {},{},{}; type {};"
+            //              " coastal {}; terrain {}; continent {}",
+            //              pos,
+            //              pos % 5632,
+            //              pos / 5632,
+            //              p.r,
+            //              p.g,
+            //              p.b,
+            //              std::to_underlying(p.type),
+            //              p.coastal,
+            //              p.terrain,
+            //              p.continent);
+        }
+    }
+    std::println("Amount of pixels of forest: {}", forest_count);
+            
+    // std::filesystem::path image_path("D:/dev/projects/libre-nudge/examples/pixel_test.bmp");
+    // std::unique_ptr<core::image> image = core::image::load_flipped_image(image_path);
 
-    std::filesystem::path image_path("D:/dev/projects/libre-nudge/examples/pixel_test.bmp");
-    std::unique_ptr<core::image> image = core::image::load_flipped_image(image_path);
+    // core::pixel p1 = image->get_pixel(0, 99);
+    // core::pixel p2 = image->get_pixel(99, 0);
+    // core::pixel p3 = image->get_pixel(0, 30);
 
-    core::pixel p1 = image->get_pixel(0, 99);
-    core::pixel p2 = image->get_pixel(99, 0);
-    core::pixel p3 = image->get_pixel(0, 30);
+    // std::println("Pixel 1: {}, {}, {}", p1.ch1, p1.ch2, p1.ch3);
+    // std::println("Pixel 2: {}, {}, {}", p2.ch1, p2.ch2, p2.ch3);
+    // std::println("Pixel 3: {}, {}, {}", p3.ch1, p3.ch2, p3.ch3);
 
-    std::println("Pixel 1: {}, {}, {}", p1.ch1, p1.ch2, p1.ch3);
-    std::println("Pixel 2: {}, {}, {}", p2.ch1, p2.ch2, p2.ch3);
-    std::println("Pixel 3: {}, {}, {}", p3.ch1, p3.ch2, p3.ch3);
+    
 
     // std::ifstream ifile(ifilep);
     // std::filesystem::path ofilep = std::filesystem::weakly_canonical(config->config.user_directory) /= "reconstructed.txt";

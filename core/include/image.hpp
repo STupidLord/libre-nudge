@@ -27,13 +27,14 @@ struct pixel {
 
 class CORE_API image {
 private:
-    int            width {};
-    int            height{};
-    unsigned char* data  {};
+    int            width   {};
+    int            height  {};
+    unsigned char* data    {};
+    uint8_t        channels{};
 
 public:
-    image(int x, int y, unsigned char* d)
-        : width(x), height(y), data(d) {};
+    image(int x, int y, unsigned char* d, uint8_t c)
+        : width(x), height(y), data(d), channels(c) {};
     virtual ~image(); // Free image data with stbi_image_free()
 
     int            get_width()         { return this->width; };
@@ -41,6 +42,7 @@ public:
     int            get_size()          { return this->width * this->height; };
     unsigned char* get_data()          { return this->data; };
     unsigned char  get_data(int index) { return this->data[index]; };
+    uint8_t        get_channels()      { return this->channels; };
 
     virtual pixel get_pixel(int x, int y) = 0;
 

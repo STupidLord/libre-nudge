@@ -18,7 +18,7 @@ set_property(TARGET core PROPERTY PDB_OUTPUT_DIRECTORY     ${CMAKE_BINARY_DIR}/c
 
 set_target_properties(core
     PROPERTIES
-        VERSION 0.2.2
+        VERSION 0.2.3
         SOVERSION 0
 )
 
@@ -31,6 +31,7 @@ target_sources(core
         "src/parse.cpp"
         "src/buildings.cpp"
         "src/definition.cpp"
+        "src/provinces.cpp"
         "src/image.cpp"
     PRIVATE
         FILE_SET HEADERS
@@ -39,6 +40,7 @@ target_sources(core
             "include/parse.hpp"
             "include/buildings.hpp"
             "include/definition.hpp"
+            "include/provinces.hpp"
             "include/image.hpp"
 )
 

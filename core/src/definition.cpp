@@ -3,7 +3,9 @@
 
 #include "definition.hpp"
 
+#include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <fstream>
 #include <filesystem>
@@ -11,6 +13,7 @@
 #include <charconv>
 #include <iterator>
 #include <regex>
+#include <ranges>
 
 namespace fs = std::filesystem;
 
@@ -38,10 +41,10 @@ std::string& operator>>(std::string& line,
                         properties[1].data() + properties[1].size(),
                         p.r);
         std::from_chars(properties[2].data(),
-                        properties[2].data() + properties[1].size(),
+                        properties[2].data() + properties[2].size(),
                         p.g);
         std::from_chars(properties[3].data(),
-                        properties[3].data() + properties[1].size(),
+                        properties[3].data() + properties[3].size(),
                         p.b);
 
         p.type      = parse_province_type(properties[4]);
@@ -72,5 +75,23 @@ auto parse_definition_csv(fs::path directory)
     }
 
     return provinces;
+}
+
+uint32_t pack_rgb(uint8_t r, uint8_t g, uint8_t b) {
+    return (static_cast<uint32_t>(r) << 24) |
+           (static_cast<uint32_t>(g) << 16) |
+           (static_cast<uint32_t>(b) << 8 ) ;
+}
+
+auto rgb_to_province_ids(const std::vector<province_definition>& provinces)
+     -> std::unordered_map<uint32_t, uint16_t> {
+    std::unordered_map<uint32_t, uint16_t> map{};
+
+    for (auto [i, province] : std::views::enumerate(provinces)) {
+        uint32_t rgb = pack_rgb(province.r, province.g, province.b);
+        map.insert({rgb, i});
+    }
+
+    return map;
 }
 }
