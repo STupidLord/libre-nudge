@@ -63,9 +63,9 @@ pixel gs_image::get_pixel(int x, int y) {
     int index = (y * this->get_width() + x);
     return pixel(x, y,
                  this->get_data(index),
+                 255,
                  0,
-                 0,
-                 255);
+                 0);
 }
 
 pixel gsa_image::get_pixel(int x, int y) {

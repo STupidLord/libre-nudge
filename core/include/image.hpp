@@ -17,12 +17,12 @@
 
 namespace core {
 struct pixel {
-    int     x  { 0 };
-    int     y  { 0 };
-    uint8_t ch1{ 0 };
-    uint8_t ch2{ 0 };
-    uint8_t ch3{ 0 };
-    uint8_t ch4{255};
+    int     x  {};
+    int     y  {};
+    uint8_t ch1{};
+    uint8_t ch2{};
+    uint8_t ch3{};
+    uint8_t ch4{};
 };
 
 class CORE_API image {
