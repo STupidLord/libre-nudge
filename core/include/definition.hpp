@@ -15,16 +15,16 @@
 namespace core {
 enum class province_type { land, sea, lake };
 struct province_definition {
-    uint8_t       r         = 0;
-    uint8_t       g         = 0;
-    uint8_t       b         = 0;
+    uint8_t       r{};
+    uint8_t       g{};
+    uint8_t       b{};
     province_type type      = province_type::land;
     bool          coastal   = false;
     std::string   terrain   = "unknown";
-    int           continent = 0;
+    int           continent{};
 
     friend std::string& operator>>(std::string& line,
-                                    province_definition& p);
+                                   province_definition& p);
 
     void clear() {
         *this = province_definition{};

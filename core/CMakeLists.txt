@@ -23,6 +23,7 @@ set_target_properties(core
 )
 
 target_include_directories(core PUBLIC "include")
+target_include_directories(core PUBLIC "vendor")
 
 target_sources(core
     PRIVATE
@@ -30,6 +31,7 @@ target_sources(core
         "src/parse.cpp"
         "src/buildings.cpp"
         "src/definition.cpp"
+        "src/image.cpp"
     PRIVATE
         FILE_SET HEADERS
         FILES
@@ -37,6 +39,7 @@ target_sources(core
             "include/parse.hpp"
             "include/buildings.hpp"
             "include/definition.hpp"
+            "include/image.hpp"
 )
 
 if(WIN32)

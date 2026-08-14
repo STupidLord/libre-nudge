@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#include <memory>
 #include <print>
 #include <ranges>
 #include <utility>
@@ -14,6 +15,7 @@
 
 #include <buildings.hpp>
 #include <definition.hpp>
+#include <image.hpp>
 #include <libre-nudge/version.hpp>
 
 int main(int argc, char* argv[]) {
@@ -34,10 +36,12 @@ int main(int argc, char* argv[]) {
     // Not sure if this is actually faster or not :hmmdevious:
     const std::vector<std::string_view> args = arg::args_from_argv(argc, argv);
     arg::argv_result args_result = arg::parse_args(args);
-    if (int rv = arg::handle_error(args_result)) return rv;
 
+    // Moved in front of error handling because I forgor
     // TODO: Move print handling to own function
-    if (args_result.flags.print_help) {}
+    if (args_result.flags.print_help) {
+        return EXIT_SUCCESS;
+    }
     if (args_result.flags.print_version) {
         std::println(
             LN_TMV_STR "\n"
@@ -53,6 +57,8 @@ int main(int argc, char* argv[]) {
         );
         return EXIT_SUCCESS;
     }
+
+    if (int rv = arg::handle_error(args_result)) return rv;
 
     // TODO: Move required handling to own function
     if (config->config.game_directory.empty()
@@ -95,19 +101,30 @@ int main(int argc, char* argv[]) {
     //                  building.spawn_point);
     // }
 
-    auto provinces = core::parse_definition_csv(config->config.game_directory);
-    for (auto&& [index, p] : std::views::enumerate(provinces)) {
-        std::println("{}: rgb {},{},{}; type {};"
-                     " coastal {}; terrain {}; continent {}",
-                     index,
-                     p.r,
-                     p.g,
-                     p.b,
-                     std::to_underlying(p.type),
-                     p.coastal,
-                     p.terrain,
-                     p.continent);
-    }
+    // auto provinces = core::parse_definition_csv(config->config.game_directory);
+    // for (auto&& [index, p] : std::views::enumerate(provinces)) {
+    //     std::println("{}: rgb {},{},{}; type {};"
+    //                  " coastal {}; terrain {}; continent {}",
+    //                  index,
+    //                  p.r,
+    //                  p.g,
+    //                  p.b,
+    //                  std::to_underlying(p.type),
+    //                  p.coastal,
+    //                  p.terrain,
+    //                  p.continent);
+    // }
+
+    std::filesystem::path image_path("D:/dev/projects/libre-nudge/examples/pixel_test.bmp");
+    std::unique_ptr<core::image> image = core::image::load_flipped_image(image_path);
+
+    core::pixel p1 = image->get_pixel(0, 99);
+    core::pixel p2 = image->get_pixel(99, 0);
+    core::pixel p3 = image->get_pixel(0, 30);
+
+    std::println("Pixel 1: {}, {}, {}", p1.ch1, p1.ch2, p1.ch3);
+    std::println("Pixel 2: {}, {}, {}", p2.ch1, p2.ch2, p2.ch3);
+    std::println("Pixel 3: {}, {}, {}", p3.ch1, p3.ch2, p3.ch3);
 
     // std::ifstream ifile(ifilep);
     // std::filesystem::path ofilep = std::filesystem::weakly_canonical(config->config.user_directory) /= "reconstructed.txt";
