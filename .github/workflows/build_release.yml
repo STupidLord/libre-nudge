@@ -50,9 +50,19 @@ jobs:
       - name: Checkout  
         uses: actions/checkout@v4
 
+      - name: Set up Clang
+        if: matrix.compiler == 'clang++'
+        uses: egor-tensin/setup-clang@v1
+
+      - name: Set up Ninja
+        if: matrix.os == 'windows-latest'
+        uses: ashutoshvarma/setup-ninja@master
+
       - name: Configure
         run: |
-          if ["${{ matrix.compiler }}" = "clang++"]; then
+          if [[ "${{ matrix.compiler }}" = "clang++" && "${{ matrix.os }}" = "windows-latest" ]]; then
+            cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
+          elif [[ "${{ matrix.compiler }}" = "clang++" ]]; then
             cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
           else
             cmake -B build -DCMAKE_BUILD_TYPE=Release
@@ -60,7 +70,7 @@ jobs:
         shell: bash
 
       - name: Build
-        run: cmake --build build
+        run: cmake --build build --config Release
 
       - name: Extract project metadata
         id: meta
