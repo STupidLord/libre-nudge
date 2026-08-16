@@ -28,7 +28,16 @@
             "displayName": "Clang (Windows)",
             "description": "Using clang++.exe",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe"
+                "CMAKE_CXX_COMPILER": "clang++.exe"
+            }
+        },
+        {
+            "name": "windows-msvc",
+            "inherits": "windows-base",
+            "displayName": "MSVC (Windows)",
+            "description": "Using cl.exe",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl.exe"
             }
         }
     ],
@@ -36,6 +45,10 @@
         {
             "name": "windows-clang-build",
             "configurePreset": "windows-clang"
+        },
+        {
+            "name": "windows-msvc-build",
+            "configurePreset": "windows-msvc"
         }
     ]
 }

@@ -1,0 +1,88 @@
+name: Build and release
+# Currently only puts releases up for Windows as I can't test nor verify Linux yet!
+# Plus, this is more of just premptive setup, no where near a point where it makes sense to distribute
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    
+    steps:
+      - name: Create GitHub release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  build-and-upload:
+    needs: create-release
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        compiler: [ clang++, msvc, g++ ]
+
+        exclude:
+          - os: ubuntu-latest
+            compiler: msvc
+          - os: windows-latest
+            compiler: g++
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout  
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: |
+          if ["${{ matrix.compiler }}" = "clang++"]; then
+            cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
+          else
+            cmake -B build -DCMAKE_BUILD_TYPE=Release
+          fi
+        shell: bash
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Extract project metadata
+        id: meta
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          if [ -z "$VERSION" ]; then VERSION="0.0.0"; fi
+          echo "semver=${VERSION}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Create output dir
+        run: mkdir build_installer
+        shell: bash
+    
+      - name: Build installer (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: inno/setup.iss
+          options: /O+ /O"build_installer" /F"libre-nudge-${{ steps.meta.outputs.semver }}-windows-x86_64-${{ matrix.compiler }}" /dLNVersion="${{ steps.meta.outputs.semver }}" /dLNBuildPath="..\build\libre-nudge\Release\*"
+    
+      - name: Upload
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build_installer/libre-nudge-*
+        
+        

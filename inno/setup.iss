@@ -7,6 +7,9 @@
 #define LNShortName "LibreNudge"
 #define LNVersion "0.1.0"
 #define LNPublisher "STupidLord"
+#ifndef LNBuildPath
+    #define LNBuildPath "..\build\windows-clang\libre-nudge\Release\*"
+#endif
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -36,7 +39,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\build\windows-clang\libre-nudge\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: {#LNBuildPath}; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

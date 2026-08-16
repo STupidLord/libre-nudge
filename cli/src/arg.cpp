@@ -11,22 +11,22 @@
 #include <optional>
 #include <print>
 
-#define R_SUCCESS (argv_result)\
+#define R_SUCCESS argv_result\
                   {argv_error::ERR_SUCCESS,\
                    std::nullopt, std::nullopt, flags, values}
-#define R_ERR_ARG (argv_result)\
+#define R_ERR_ARG argv_result\
                   {argv_error::ERR_ARG,\
                    args.at(i), std::nullopt, flags, values}
-#define R_ERR_ARG_SIZE (argv_result)\
+#define R_ERR_ARG_SIZE argv_result\
                        {argv_error::ERR_ARG_SIZE,\
                         args.at(i), std::nullopt, flags, values}
-#define R_ERR_ARG_CONFLICT(conflict_arg) (argv_result)\
+#define R_ERR_ARG_CONFLICT(conflict_arg) argv_result\
                           {argv_error::ERR_ARG_CONFLICT,\
                            args.at(i), conflict_arg, flags, values}
-#define R_ERR_ARG_EXPECTED_VALUE (argv_result)\
+#define R_ERR_ARG_EXPECTED_VALUE argv_result\
                                  {argv_error::ERR_ARG_EXPECTED_VALUE,\
                                   args.at(i), std::nullopt, flags, values}
-#define R_ERR_ARG_EXPECTED_VALUE_GOT(bad_value) (argv_result)\
+#define R_ERR_ARG_EXPECTED_VALUE_GOT(bad_value) argv_result\
                                     {argv_error::ERR_ARG_EXPECTED_VALUE_GOT,\
                                      args.at(i), bad_value, flags, values}
 
