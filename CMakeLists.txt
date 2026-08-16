@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 project(
     libre-nudge
     LANGUAGES CXX RC
-    SPDX_LICENSE "GPL-3.0-or-later"
+    # SPDX_LICENSE "GPL-3.0-or-later"
 )
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
