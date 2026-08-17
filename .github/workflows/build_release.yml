@@ -25,7 +25,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
 
@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        compiler: [ clang++, msvc, g++ ]
+        compiler: [ clang, msvc, gcc ]
 
         exclude:
           - os: ubuntu-latest
@@ -60,9 +60,9 @@ jobs:
 
       - name: Configure
         run: |
-          if [[ "${{ matrix.compiler }}" = "clang++" && "${{ matrix.os }}" = "windows-latest" ]]; then
+          if [[ "${{ matrix.compiler }}" = "clang" && "${{ matrix.os }}" = "windows-latest" ]]; then
             cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
-          elif [[ "${{ matrix.compiler }}" = "clang++" ]]; then
+          elif [[ "${{ matrix.compiler }}" = "clang" ]]; then
             cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
           else
             cmake -B build -DCMAKE_BUILD_TYPE=Release
