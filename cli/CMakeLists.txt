@@ -18,7 +18,7 @@ set_property(TARGET cli PROPERTY PDB_OUTPUT_DIRECTORY     ${CMAKE_BINARY_DIR}/cl
 
 set_target_properties(cli
     PROPERTIES
-        VERSION 0.1.0
+        VERSION 0.1.1
 )
 
 target_link_libraries(cli PRIVATE core)
@@ -30,6 +30,7 @@ target_sources(cli
         "src/main.cpp"
         "src/common.cpp"
         "src/arg.cpp"
+        "src/arg_flags.cpp"
         "src/ini.cpp"
     PRIVATE
         FILE_SET HEADERS

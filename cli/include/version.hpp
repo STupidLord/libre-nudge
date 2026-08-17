@@ -5,7 +5,7 @@
 
 #define LN_V_MAJOR 0
 #define LN_V_MINOR 1
-#define LN_V_PATCH 0
+#define LN_V_PATCH 1
 
 #define LN_TM_STR  "Libre Nudge (TM) Commmand Line Interface"
 #define LN_TMV_STR LN_TM_STR " Version {}.{}.{}"

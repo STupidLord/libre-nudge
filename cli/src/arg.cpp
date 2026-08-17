@@ -4,131 +4,144 @@
 #include "arg.hpp"
 
 #include <cstdlib>
-#include <tuple>
+#include <functional>
 #include <vector>
 #include <string_view>
 #include <cstddef>
-#include <optional>
 #include <print>
 
-#define R_SUCCESS argv_result\
-                  {argv_error::ERR_SUCCESS,\
-                   std::nullopt, std::nullopt, flags, values}
-#define R_ERR_ARG argv_result\
-                  {argv_error::ERR_ARG,\
-                   args.at(i), std::nullopt, flags, values}
-#define R_ERR_ARG_SIZE argv_result\
-                       {argv_error::ERR_ARG_SIZE,\
-                        args.at(i), std::nullopt, flags, values}
-#define R_ERR_ARG_CONFLICT(conflict_arg) argv_result\
-                          {argv_error::ERR_ARG_CONFLICT,\
-                           args.at(i), conflict_arg, flags, values}
-#define R_ERR_ARG_EXPECTED_VALUE argv_result\
-                                 {argv_error::ERR_ARG_EXPECTED_VALUE,\
-                                  args.at(i), std::nullopt, flags, values}
-#define R_ERR_ARG_EXPECTED_VALUE_GOT(bad_value) argv_result\
-                                    {argv_error::ERR_ARG_EXPECTED_VALUE_GOT,\
-                                     args.at(i), bad_value, flags, values}
+// This argument parser was originally from one of my C projects,
+// however I had decided it was a bit annoying and such completely
+// rewrote it. Did I need to? Not really, I just considered I could
+// do it differently and so I did.
 
 namespace arg {
 namespace {
-// Might need to implement a collect all and collect multiple eventually
-/**
-* @return Returns a size_t equal to the amount of values collected, returns
-*         1 if a value is collected and 0 if no value is collected.
-*/
-auto collect_value(const std::vector<std::string_view> args,
-                    const int current) // Evil wrapping :sob:
-                    -> std::tuple<std::size_t,
-                                    std::optional<std::string_view>> {
-    std::size_t checkout = current + 1;
-
-    if (checkout >= args.size() || args.at(checkout).front() == '-')
-        return {0, std::nullopt};
-
-    return {1, args.at(checkout)};
+command_return str_flag(ini::ini& config, size_t pos,
+                        const std::vector<std::string_view>& args) {
+    command_return cr{};
+    std::vector<std::string_view> pass_args{};
+    for (const command& cmd : COMMANDS) {
+        if (cmd.str_flag.empty()) continue;
+        if (args.at(pos) == cmd.str_flag) {
+            size_t potential_arguments = args.size() - 1 - pos;
+            if (potential_arguments < cmd.expected_args) {
+                cr.argument = pos;
+                cr.code = command_return_code::FAILURE_EXPECTED_VALUE;
+                return cr;
+            }
+            switch (cmd.expected_args) {
+            case 0: cmd.handler(config, pass_args); break;
+            default:
+                pass_args.push_back(args.at(pos + cmd.expected_args));
+                cmd.handler(config, pass_args);
+                break;
+            }
+            cr.argument = cmd.expected_args;
+            if (cmd.exit_early) cr.code = command_return_code::EARLY_EXIT;
+            else cr.code = command_return_code::SUCCESS;
+            return cr;
+        }
+    }
+    cr.code = command_return_code::FAILURE_UNKNOWN;
+    return cr;
 }
-};
+command_return char_flag(ini::ini& config, size_t pos,
+                         const std::vector<std::string_view>& args) {
+    command_return cr{};
+    std::vector<std::string_view> pass_args{};
+    for (const command& cmd : COMMANDS) {
+        if (cmd.char_flag.empty()) continue;
+        if (args.at(pos).at(1) == cmd.char_flag.at(1)) {
+            size_t potential_arguments = args.size() - 1 - pos;
+            if (potential_arguments < cmd.expected_args) {
+                cr.argument = pos;
+                cr.code = command_return_code::FAILURE_EXPECTED_VALUE;
+                return cr;
+            }
+            switch (cmd.expected_args) {
+            case 0: cmd.handler(config, std::vector<std::string_view>()); break;
+            default:
+                pass_args.push_back(args.at(pos + cmd.expected_args));
+                cmd.handler(config, pass_args);
+                break;
+            }
+            cr.argument = cmd.expected_args;
+            if (cmd.exit_early) cr.code = command_return_code::EARLY_EXIT;
+            else cr.code = command_return_code::SUCCESS;
+            return cr;
+        }
+    }
+    cr.argument = pos;
+    cr.code = command_return_code::FAILURE_UNKNOWN;
+    return cr;
+}
+}
+
+// TODO: See if this could be split up?
+// It's not really big, but it's annoyingly deep.
+
+command_return parse_args(ini::ini& config,
+                          const std::vector<std::string_view>& args) {
+    command_return cr{};
+    for (int i = 0; i < args.size(); i++) {
+        switch (args.at(i).at(1)) {
+        case '-': cr = str_flag(config, i, args); break;
+        default:
+            switch (args.at(i).at(0)) {
+            case '-':
+                if (args.at(i).size() > 2) {
+                    cr.argument = i;
+                    cr.code = command_return_code::FAILURE_CHAR_FLAG_BIG;
+                    return cr;
+                }
+                cr = char_flag(config, i, args); break;
+            default:
+                cr.argument = i;
+                cr.code = command_return_code::FAILURE_EXPECTED_FLAG;
+                return cr;
+            }
+        }
+        if (cr.code == command_return_code::EARLY_EXIT
+         || cr.code == command_return_code::FAILURE_UNKNOWN
+         || cr.code == command_return_code::FAILURE_EXPECTED_VALUE) return cr;
+        if (cr.argument > 0) {
+            i += cr.argument;
+            cr.argument = 0;
+        }
+    }
+    return cr;
+}
 
 std::vector<std::string_view> args_from_argv(int argc, char* argv[]) {
-    return std::vector<std::string_view>(argv, argv + argc);
+    return std::vector<std::string_view>(argv + 1, argv + argc);
 }
 
-argv_result parse_args(const std::vector<std::string_view> args) {
-    argv_flags flags{};
-    argv_values values{};
-
-    for (int i = 1; i < args.size(); i++) {
-        if (args.at(i).at(1) == '-') {
-            if (args.at(i) == "--version") {
-                flags.print_version = true;
-                return R_SUCCESS; // Return early on version request
-            } else if (args.at(i) == "--help") {
-                flags.print_help = true;
-                return R_SUCCESS; // Like version, return early on help request
-            } else if (args.at(i) == "--game") {
-                if (i+1 >= args.size()) return R_ERR_ARG_EXPECTED_VALUE;
-
-                auto [read, value] = collect_value(args, i);
-                if (!read) return R_ERR_ARG_EXPECTED_VALUE_GOT(args.at(i+1));
-
-                values.game_directory = value.value();
-                i += read;
-            } else if (args.at(i) == "--user") {
-                if (i+1 >= args.size()) return R_ERR_ARG_EXPECTED_VALUE;
-
-                auto [read, value] = collect_value(args, i);
-                if (!read) return R_ERR_ARG_EXPECTED_VALUE_GOT(args.at(i+1));
-
-                values.user_directory = value.value();
-                i += read;
-            } else {
-                return R_ERR_ARG;
-            }
-        } else if (args.at(i).front() == '-') {
-            if (args.at(i).size() > 2) return R_ERR_ARG_SIZE;
-            switch (args.at(i).at(1)) {
-            case 'v':
-                flags.print_version = true;
-                return R_SUCCESS;
-            case 'h':
-                flags.print_help = true;
-                return R_SUCCESS;
-            default:
-                return R_ERR_ARG;
-            }
-        } else return R_ERR_ARG;
-    }
-    return R_SUCCESS;
-}
-
-int handle_error(const argv_result& result) {
-    switch (result.error_code) {
-    case arg::argv_error::ERR_SUCCESS:
-        break;
-    case arg::argv_error::ERR_ARG:
+int handle_error(const command_return& cr,
+                 const std::vector<std::string_view>& args) {
+    switch (cr.code) {
+    case command_return_code::SUCCESS: return 0;
+    case command_return_code::FAILURE_UNKNOWN: 
         std::println(stderr, "Invalid argument: {}",
-                     result.bad_arg.value_or(""));
+                     args.at(cr.argument));
         return EXIT_FAILURE;
-    case arg::argv_error::ERR_ARG_SIZE:
-        std::println(stderr, "Invalid argument, expected single character flag: {}",
-                     result.bad_arg.value_or(""));
+    case command_return_code::FAILURE_EXPECTED_FLAG: 
+        std::println(stderr,
+                     "Invalid argument, expected flag: {}",
+                     args.at(cr.argument));
         return EXIT_FAILURE;
-    case arg::argv_error::ERR_ARG_CONFLICT:
-        std::println(stderr, "Conflicting arguments: {} with {}",
-                     result.bad_arg.value_or(""),
-                     result.bad_arg_2.value_or(""));
+    case command_return_code::FAILURE_CHAR_FLAG_BIG: 
+        std::println(stderr,
+                     "Invalid argument, expected single character flag: {}",
+                     args.at(cr.argument));
         return EXIT_FAILURE;
-    case arg::argv_error::ERR_ARG_EXPECTED_VALUE:
-        std::println(stderr, "Expected value for argument: {}",
-                     result.bad_arg.value_or(""));
+    case command_return_code::FAILURE_EXPECTED_VALUE: 
+        std::println(stderr,
+                     "Expected value for argument: {}",
+                     args.at(cr.argument));
         return EXIT_FAILURE;
-    case arg::argv_error::ERR_ARG_EXPECTED_VALUE_GOT:
-        std::println(stderr, "Expected value for argument: {} got {}",
-                     result.bad_arg.value_or(""),
-                     result.bad_arg_2.value_or(""));
+    case command_return_code::EARLY_EXIT: 
         return EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
 }
 };
