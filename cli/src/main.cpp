@@ -33,6 +33,11 @@ int main(int argc, char* argv[]) {
         config = ini::ini{};
     }
 
+    // TODO: Maybe force display help if no arguments?
+
+    //   This is still applicable, funnily enough, since now
+    //   it can apply to the fact that I have no clue if the
+    //   new arg setup is actually faster or not
     // Not sure if this is actually faster or not :hmmdevious:
     const std::vector<std::string_view> args = arg::args_from_argv(argc, argv);
     arg::command_return cr = arg::parse_args(config.value(), args);
