@@ -33,7 +33,6 @@ if(USE_GIT_VERSION)
     project(libre-nudge VERSION ${GIT_TAG_VERSION})
 endif()
 
-
 if(WIN32)
     enable_language(RC)
 endif()
