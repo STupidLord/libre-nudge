@@ -38,7 +38,8 @@ target_include_directories(core PUBLIC "vendor")
 
 target_sources(core
     PRIVATE
-        "src/entry.cpp"
+        # Currently does nothing except stop compiles on Linux
+        # "src/entry.cpp"
         "src/parse.cpp"
         "src/buildings.cpp"
         "src/definition.cpp"
