@@ -52,9 +52,9 @@ const command COMMANDS[] = {
         0, handle_help, true
     },
     {
-        "",   "--version", "",
+        "",   "--version", "[verbose]",
         "Prints version of CLI frontend and program backend",
-        0, handle_version, true
+        -1, handle_version, true
     },
     {
         "",   "--game-dir", "<path>",

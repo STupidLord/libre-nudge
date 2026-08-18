@@ -18,10 +18,25 @@ set_property(TARGET cli PROPERTY PDB_OUTPUT_DIRECTORY     ${CMAKE_BINARY_DIR}/cl
 
 set_target_properties(cli
     PROPERTIES
-        VERSION 0.1.1
+        VERSION 0.1.2
 )
 
-target_link_libraries(cli PRIVATE core)
+get_target_property(CLI_VERSION cli VERSION)
+string(REPLACE "." ";" VERSION_LIST "${CLI_VERSION}")
+list(GET VERSION_LIST 0 CLI_VERSION_MAJOR)
+list(GET VERSION_LIST 1 CLI_VERSION_MINOR)
+list(GET VERSION_LIST 2 CLI_VERSION_PATCH)
+configure_file(
+    "${CMAKE_SOURCE_DIR}/cli/cli_version.hpp.in"
+    "${CMAKE_BINARY_DIR}/cli_version.hpp"
+    @ONLY
+)
+
+target_link_libraries(
+    cli
+        PRIVATE core
+        PRIVATE libre-nudge-config
+)
 
 target_include_directories(cli PRIVATE "include")
 
@@ -35,7 +50,6 @@ target_sources(cli
     PRIVATE
         FILE_SET HEADERS
         FILES
-            "include/version.hpp"
             "include/common.hpp"
             "include/arg.hpp"
             "include/ini.hpp"

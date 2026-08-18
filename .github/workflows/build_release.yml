@@ -63,11 +63,11 @@ jobs:
       - name: Configure
         run: |
           if [[ "${{ matrix.compiler }}" = "clang" && "${{ matrix.os }}" = "windows-latest" ]]; then
-            cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
+            cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -DUSE_GIT_VERSION=ON
           elif [[ "${{ matrix.compiler }}" = "clang" ]]; then
-            cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
+            cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -DUSE_GIT_VERSION=ON
           else
-            cmake -B build -DCMAKE_BUILD_TYPE=Release
+            cmake -B build -DCMAKE_BUILD_TYPE=Release -DUSE_GIT_VERSION=ON
           fi
         shell: bash
 

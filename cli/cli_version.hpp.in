@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 STupidLord
+
+#pragma once
+
+#define LN_CLI_V_MAJOR @CLI_VERSION_MAJOR@
+#define LN_CLI_V_MINOR @CLI_VERSION_MINOR@
+#define LN_CLI_V_PATCH @CLI_VERSION_PATCH@
+
+#define LN_CLI_TM_STR  "Libre Nudge (TM) Command Line Interface"
+#define LN_CLI_CR_STR  "Copyright (C) 2026 STupidLord"
+#define LN_CLI_GPL_STR "Distributed under GNU General Public License v3.0 or later"

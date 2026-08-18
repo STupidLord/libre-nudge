@@ -22,6 +22,17 @@ set_target_properties(core
         SOVERSION 0
 )
 
+get_target_property(CORE_VERSION core VERSION)
+string(REPLACE "." ";" VERSION_LIST "${CORE_VERSION}")
+list(GET VERSION_LIST 0 CORE_VERSION_MAJOR)
+list(GET VERSION_LIST 1 CORE_VERSION_MINOR)
+list(GET VERSION_LIST 2 CORE_VERSION_PATCH)
+configure_file(
+    "${CMAKE_SOURCE_DIR}/core/core_version.hpp.in"
+    "${CMAKE_BINARY_DIR}/core_version.hpp"
+    @ONLY
+)
+
 target_include_directories(core PUBLIC "include")
 target_include_directories(core PUBLIC "vendor")
 
@@ -36,7 +47,6 @@ target_sources(core
     PRIVATE
         FILE_SET HEADERS
         FILES
-            "include/libre-nudge/version.hpp"
             "include/parse.hpp"
             "include/buildings.hpp"
             "include/definition.hpp"

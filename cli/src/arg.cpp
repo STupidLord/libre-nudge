@@ -17,14 +17,17 @@
 
 namespace arg {
 namespace {
+// Internal logic after the matching here should probably be split
+// into another function because it's identical, it's tiring to
+// update both everytime.
 command_return str_flag(ini::ini& config, size_t pos,
                         const std::vector<std::string_view>& args) {
     command_return cr{};
     std::vector<std::string_view> pass_args{};
+    int potential_arguments = args.size() - 1 - pos;
     for (const command& cmd : COMMANDS) {
         if (cmd.str_flag.empty()) continue;
         if (args.at(pos) == cmd.str_flag) {
-            size_t potential_arguments = args.size() - 1 - pos;
             if (potential_arguments < cmd.expected_args) {
                 cr.argument = pos;
                 cr.code = command_return_code::FAILURE_EXPECTED_VALUE;
@@ -32,12 +35,19 @@ command_return str_flag(ini::ini& config, size_t pos,
             }
             switch (cmd.expected_args) {
             case 0: cmd.handler(config, pass_args); break;
+            case -1:
+                if (potential_arguments > 0 && args.at(pos + 1).at(0) != '-')  {
+                    pass_args.push_back(args.at(pos + 1));
+                    cr.argument = 1;
+                }
+                cmd.handler(config, pass_args);
+                break;
             default:
                 pass_args.push_back(args.at(pos + cmd.expected_args));
                 cmd.handler(config, pass_args);
+                cr.argument = cmd.expected_args;
                 break;
             }
-            cr.argument = cmd.expected_args;
             if (cmd.exit_early) cr.code = command_return_code::EARLY_EXIT;
             else cr.code = command_return_code::SUCCESS;
             return cr;
@@ -50,10 +60,10 @@ command_return char_flag(ini::ini& config, size_t pos,
                          const std::vector<std::string_view>& args) {
     command_return cr{};
     std::vector<std::string_view> pass_args{};
+    int potential_arguments = args.size() - 1 - pos;
     for (const command& cmd : COMMANDS) {
         if (cmd.char_flag.empty()) continue;
         if (args.at(pos).at(1) == cmd.char_flag.at(1)) {
-            size_t potential_arguments = args.size() - 1 - pos;
             if (potential_arguments < cmd.expected_args) {
                 cr.argument = pos;
                 cr.code = command_return_code::FAILURE_EXPECTED_VALUE;
@@ -61,12 +71,19 @@ command_return char_flag(ini::ini& config, size_t pos,
             }
             switch (cmd.expected_args) {
             case 0: cmd.handler(config, std::vector<std::string_view>()); break;
+            case -1:
+                if (args.at(pos + 1).at(0) != '-')  {
+                    pass_args.push_back(args.at(pos + 1));
+                    cr.argument = 1;
+                }
+                cmd.handler(config, pass_args);
+                break;
             default:
                 pass_args.push_back(args.at(pos + cmd.expected_args));
                 cmd.handler(config, pass_args);
+                cr.argument = cmd.expected_args;
                 break;
             }
-            cr.argument = cmd.expected_args;
             if (cmd.exit_early) cr.code = command_return_code::EARLY_EXIT;
             else cr.code = command_return_code::SUCCESS;
             return cr;

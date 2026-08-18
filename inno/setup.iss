@@ -5,7 +5,9 @@
 #define LNName "Libre Nudge"
 #define LNSystemName "libre-nudge"
 #define LNShortName "LibreNudge"
-#define LNVersion "0.1.0"
+#ifndef LNVersion
+    #define LNVersion "0.1.1"
+#endif
 #define LNPublisher "STupidLord"
 #ifndef LNBuildPath
     #define LNBuildPath "..\build\windows-clang\libre-nudge\Release\*"

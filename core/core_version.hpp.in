@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 STupidLord
+
+#pragma once
+
+#define LN_CORE_V_MAJOR @CORE_VERSION_MAJOR@
+#define LN_CORE_V_MINOR @CORE_VERSION_MINOR@
+#define LN_CORE_V_PATCH @CORE_VERSION_PATCH@
+
+#define LN_CORE_TM_STR  "Libre Nudge (TM) Core Backend"
+#define LN_CORE_CR_STR  "Copyright (C) 2026 STupidLord"
+#define LN_CORE_GPL_STR "Distributed under GNU General Public License v3.0 or later"

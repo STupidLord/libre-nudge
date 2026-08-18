@@ -22,14 +22,9 @@ A open source implementation of Hearts of Iron IV's Nudge tool!
 3) Add additonal features the Nudge lacks
 
 ## Versioning
-It might very well come off as confusing, but Libre Nudge has multiple different versioning numbers.
+Libre Nudge consists of multiple things and thus has multiple versions. However, the project is grouped under one super-version to make it simpler on end users. The super-version is set in the root project CMakeLists file, however the GitHub Workflow uses the most recent release tag as the source for the super-version, primarily used to keep it consistent with both the release title and the installer name.
 
-Currently there are three of these:
-- CLI version ([CMakeLists.txt](cli/CMakeLists.txt) and [version.hpp](cli/include/version.hpp))
-- Backend version ([CMakeLists.txt](core/CMakeLists.txt) and [version.hpp](core/include/libre-nudge/version.hpp))
-- Installer version ([clang.iss](inno/clang.iss))
-
-The installer version can be best thought of as the projects *overall* version, and the versions of the CLi and backend being for keeping track of *what* changes.
+The root project and subprojects use template files to generate define macros for use in C++. The interface library `libre-nudge-config` contains the path to all of the macro headers in the build directory. It's not recommended to manually change them as rebuilding (or reconfiguring) the project will regenerate the data.
 
 ## Building
 TBA, I don't want to write this up right now, I'll try and remember to do it later!
