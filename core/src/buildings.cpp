@@ -186,7 +186,6 @@ auto load_buildings_file_from_tokens(std::vector<internal::token>& tokens)
 }
 }
 
-// TODO: Maybe make this not strictly load common/buildings? idk
 auto load_buildings(std::filesystem::path game_directory)
      -> std::vector<building> {
     std::vector<building> buildings;

@@ -53,7 +53,7 @@ const command COMMANDS[] = {
     },
     {
         "",   "--version", "[verbose]",
-        "Prints version of CLI frontend and program backend",
+        "Prints version information",
         -1, handle_version, true
     },
     {
