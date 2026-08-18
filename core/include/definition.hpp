@@ -4,9 +4,7 @@
 #pragma once
 
 #include <unordered_map>
-#ifdef _WIN32
-#include "windowsdll.hpp"
-#endif // _WIN32
+#include "CORE_API.hpp"
 
 #include <cstdint>
 #include <string>

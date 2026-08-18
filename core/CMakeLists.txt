@@ -48,6 +48,7 @@ target_sources(core
     PRIVATE
         FILE_SET HEADERS
         FILES
+            "include/CORE_API.hpp"
             "include/parse.hpp"
             "include/buildings.hpp"
             "include/definition.hpp"
@@ -56,12 +57,6 @@ target_sources(core
 )
 
 if(WIN32)
-    target_sources(core
-        PRIVATE
-            FILE_SET HEADERS
-            FILES
-                "include/windowsdll.hpp"
-    )
+    target_compile_definitions(core PRIVATE CORE_EXPORTS)
 endif()
 
-target_compile_definitions(core PRIVATE CORE_EXPORTS)
