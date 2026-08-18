@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Clang
-        if: matrix.compiler == 'clang++'
+        if: matrix.compiler == 'clang'
         uses: egor-tensin/setup-clang@v2.3
         with:
           version: 22
