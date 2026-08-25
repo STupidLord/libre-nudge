@@ -45,6 +45,8 @@ target_sources(core
         "src/definition.cpp"
         "src/provinces.cpp"
         "src/image.cpp"
+        "src/heightmap.cpp"
+        "src/map.cpp"
     PRIVATE
         FILE_SET HEADERS
         FILES
@@ -54,6 +56,8 @@ target_sources(core
             "include/definition.hpp"
             "include/provinces.hpp"
             "include/image.hpp"
+            "include/heightmap.hpp"
+            "include/map.hpp"
 )
 
 if(WIN32)

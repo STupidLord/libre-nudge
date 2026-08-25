@@ -17,5 +17,5 @@
 namespace core {
 CORE_API auto load_province_map(std::filesystem::path directory,
                   const std::vector<province_definition>& provinces)
-              -> std::vector<uint16_t>;
+              -> std::vector<std::uint16_t>;
 }

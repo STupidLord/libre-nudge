@@ -17,6 +17,7 @@
 #include <definition.hpp>
 #include <image.hpp>
 #include <provinces.hpp>
+#include <heightmap.hpp>
 
 int main(int argc, char* argv[]) {
     std::filesystem::path config_path = common::get_location() /= "config.ini";
@@ -78,44 +79,49 @@ int main(int argc, char* argv[]) {
     //                  building.spawn_point);
     // }
 
-    auto provinces = core::parse_definition_csv(config->config.game_directory);
-    // for (auto&& [index, p] : std::views::enumerate(provinces)) {
-    //     std::println("{}: rgb {},{},{}; type {};"
-    //                  " coastal {}; terrain {}; continent {}",
-    //                  index,
-    //                  p.r,
-    //                  p.g,
-    //                  p.b,
-    //                  std::to_underlying(p.type),
-    //                  p.coastal,
-    //                  p.terrain,
-    //                  p.continent);
+    // auto provinces = core::parse_definition_csv(config->config.game_directory);
+    // // for (auto&& [index, p] : std::views::enumerate(provinces)) {
+    // //     std::println("{}: rgb {},{},{}; type {};"
+    // //                  " coastal {}; terrain {}; continent {}",
+    // //                  index,
+    // //                  p.r,
+    // //                  p.g,
+    // //                  p.b,
+    // //                  std::to_underlying(p.type),
+    // //                  p.coastal,
+    // //                  p.terrain,
+    // //                  p.continent);
+    // // }
+    // auto provinces_map = core::load_province_map(config->config.game_directory,
+    //                                              provinces);
+    // // uint16_t id = provinces_map.at(1018 * 5632 + 2825);
+    // // uint16_t id = provinces_map.at(1167 * 5632 + 3359);
+    // // auto p = provinces.at(id);
+    // int forest_count{};
+    // for (auto [pos, pixel] : std::views::enumerate(provinces_map)) {
+    //     auto p = provinces.at(pixel);
+    //     if (p.terrain == "forest") {
+    //         forest_count++;
+    //         // std::println("{} {},{}: rgb {},{},{}; type {};"
+    //         //              " coastal {}; terrain {}; continent {}",
+    //         //              pos,
+    //         //              pos % 5632,
+    //         //              pos / 5632,
+    //         //              p.r,
+    //         //              p.g,
+    //         //              p.b,
+    //         //              std::to_underlying(p.type),
+    //         //              p.coastal,
+    //         //              p.terrain,
+    //         //              p.continent);
+    //     }
     // }
-    auto provinces_map = core::load_province_map(config->config.game_directory,
-                                                 provinces);
-    // uint16_t id = provinces_map.at(1018 * 5632 + 2825);
-    // uint16_t id = provinces_map.at(1167 * 5632 + 3359);
-    // auto p = provinces.at(id);
-    int forest_count{};
-    for (auto [pos, pixel] : std::views::enumerate(provinces_map)) {
-        auto p = provinces.at(pixel);
-        if (p.terrain == "forest") {
-            forest_count++;
-            // std::println("{} {},{}: rgb {},{},{}; type {};"
-            //              " coastal {}; terrain {}; continent {}",
-            //              pos,
-            //              pos % 5632,
-            //              pos / 5632,
-            //              p.r,
-            //              p.g,
-            //              p.b,
-            //              std::to_underlying(p.type),
-            //              p.coastal,
-            //              p.terrain,
-            //              p.continent);
-        }
-    }
-    std::println("Amount of pixels of forest: {}", forest_count);
+    // std::println("Amount of pixels of forest: {}", forest_count);
+
+    // auto heights = core::load_heightmap(config->config.game_directory, provinces);
+    // std::println("2834, 885: {}", heights[885 * 5632 + 2834]);
+
+    core::bitmap::read_bitmap("D:/steamlibrary/steamapps/common/Hearts of Iron IV/map/heightmap.bmp");
             
     // std::filesystem::path image_path("D:/dev/projects/libre-nudge/examples/pixel_test.bmp");
     // std::unique_ptr<core::image> image = core::image::load_flipped_image(image_path);

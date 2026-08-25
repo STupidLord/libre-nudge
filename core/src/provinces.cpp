@@ -16,8 +16,8 @@ namespace fs = std::filesystem;
 namespace core {
 auto load_province_map(std::filesystem::path directory,
                        const std::vector<province_definition>& provinces)
-     -> std::vector<uint16_t> {
-    std::vector<uint16_t> labels{};
+     -> std::vector<std::uint16_t> {
+    std::vector<std::uint16_t> labels{};
 
     fs::path map_path = fs::weakly_canonical(directory)
                      /= "map/provinces.bmp";
@@ -37,7 +37,7 @@ auto load_province_map(std::filesystem::path directory,
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             pixel p = map->get_pixel(x, y);
-            uint32_t rgb = pack_rgb(p.ch1, p.ch2, p.ch3);
+            std::uint32_t rgb = pack_rgb(p.ch1, p.ch2, p.ch3);
             if (auto id = id_map.find(rgb); id != id_map.end()) {
                 labels[y * width + x] = id->second;
             }

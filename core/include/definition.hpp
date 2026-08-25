@@ -14,16 +14,16 @@
 namespace core {
 enum class province_type { land, sea, lake };
 struct province_definition {
-    uint8_t       r{};
-    uint8_t       g{};
-    uint8_t       b{};
+    std::uint8_t  r{};
+    std::uint8_t  g{};
+    std::uint8_t  b{};
     province_type type      = province_type::land;
     bool          coastal   = false;
     std::string   terrain   = "unknown";
     int           continent{};
 
-    friend std::string& operator>>(std::string& line,
-                                   province_definition& p);
+    friend CORE_API std::string& operator>>(std::string& line,
+                                            province_definition& p);
 
     void clear() {
         *this = province_definition{};
@@ -33,7 +33,7 @@ struct province_definition {
 CORE_API auto parse_definition_csv(std::filesystem::path directory)
               -> std::vector<province_definition>;
               
-CORE_API uint32_t pack_rgb(uint8_t r, uint8_t g, uint8_t b);
+CORE_API std::uint32_t pack_rgb(std::uint8_t r, std::uint8_t g, std::uint8_t b);
 
 // Very cursed wrapping because I couldn't
 // decide how to wrap such a long line
@@ -41,6 +41,6 @@ CORE_API uint32_t pack_rgb(uint8_t r, uint8_t g, uint8_t b);
 //
 CORE_API auto rgb_to_province_ids(
                   const std::vector<province_definition>& provinces
-              ) -> std::unordered_map<uint32_t, uint16_t>;
+              ) -> std::unordered_map<std::uint32_t, std::uint16_t>;
 
 }

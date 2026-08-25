@@ -3,9 +3,15 @@
 
 #include "image.hpp"
 
+#include <array>
 #include <cstddef>
+#include <fstream>
+#include <ios>
 #include <memory>
 #include <filesystem>
+#include <fstream>
+#include <print>
+#include <cmath>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -45,8 +51,6 @@ std::unique_ptr<image> image::load_flipped_image(std::filesystem::path path) {
     stbi_set_flip_vertically_on_load(0); // Not sure if needed
 
     if (data == NULL) return nullptr;
-
-    std::unique_ptr<image> image;
 
     switch (n) {
     case 4:  return std::make_unique<rgba_image>(x, y, data, 4);
@@ -96,5 +100,48 @@ pixel rgba_image::get_pixel(int x, int y) {
                  this->get_data(index+1),
                  this->get_data(index+2),
                  this->get_data(index+3));
+}
+
+namespace bitmap {
+std::ifstream& operator>>(std::ifstream& is, bitmap_rgb_quad& c) {
+    is >> c.r >> c.g >> c.b >> c.a;
+    return is;
+}
+
+// TODO: error handling, like a lot of error handling
+//
+// TODO: add more file agnostic parsing, currently
+// only handles 8-bit indexed
+//
+// TODO: part of the prior, but implement coverage of
+// the full BMP format
+void read_bitmap(std::filesystem::path path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open()) return;
+
+    bitmap_file_header header;
+    file.read(reinterpret_cast<char*>(&header), sizeof(bitmap_file_header));
+    if (header.signature != std::array{'B', 'M'}) return;
+
+    bitmap_header_type header_type;
+    file.read(reinterpret_cast<char*>(&header_type), sizeof(bitmap_header_type));
+    if (header_type != 40) return;
+
+    std::streamsize read{file.gcount()};
+    file.seekg(-read, std::ios_base::cur);
+    bitmap_info_header info_header;
+    file.read(reinterpret_cast<char*>(&info_header), sizeof(bitmap_info_header));
+
+    std::size_t table_size{0};
+    if (info_header.bit_count == 8) table_size = 256;
+ 
+    std::vector<bitmap_rgb_quad> colors(table_size);
+    for (std::size_t i = 0; i < table_size; i++)
+        file.read(reinterpret_cast<char*>(&colors[i]), sizeof(bitmap_rgb_quad));
+
+    file.close();
+
+    std::println("Test: {}", colors[255].r);
+}
 }
 }

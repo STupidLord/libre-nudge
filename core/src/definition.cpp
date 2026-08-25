@@ -77,18 +77,18 @@ auto parse_definition_csv(fs::path directory)
     return provinces;
 }
 
-uint32_t pack_rgb(uint8_t r, uint8_t g, uint8_t b) {
-    return (static_cast<uint32_t>(r) << 24) |
-           (static_cast<uint32_t>(g) << 16) |
-           (static_cast<uint32_t>(b) << 8 ) ;
+std::uint32_t pack_rgb(std::uint8_t r, std::uint8_t g, std::uint8_t b) {
+    return (static_cast<std::uint32_t>(r) << 24) |
+           (static_cast<std::uint32_t>(g) << 16) |
+           (static_cast<std::uint32_t>(b) << 8 ) ;
 }
 
 auto rgb_to_province_ids(const std::vector<province_definition>& provinces)
-     -> std::unordered_map<uint32_t, uint16_t> {
-    std::unordered_map<uint32_t, uint16_t> map{};
+     -> std::unordered_map<std::uint32_t, std::uint16_t> {
+    std::unordered_map<std::uint32_t, std::uint16_t> map{};
 
     for (auto [i, province] : std::views::enumerate(provinces)) {
-        uint32_t rgb = pack_rgb(province.r, province.g, province.b);
+        std::uint32_t rgb = pack_rgb(province.r, province.g, province.b);
         map.insert({rgb, i});
     }
 
