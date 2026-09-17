@@ -34,8 +34,9 @@ configure_file(
 
 target_link_libraries(
     cli
-        PRIVATE core
-        PRIVATE libre-nudge-config
+        PRIVATE
+            core
+            libre-nudge-config
 )
 
 target_include_directories(cli PRIVATE "include")

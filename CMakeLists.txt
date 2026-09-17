@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 project(
     libre-nudge
     VERSION 0.1.1
-    LANGUAGES CXX
+    LANGUAGES CXX C # I don't want C here, but GLAD does
 )
 
 # By default we use the version up there,
@@ -61,8 +61,9 @@ target_include_directories(
 
 add_subdirectory(core)
 add_subdirectory(cli)
+add_subdirectory(gui)
 
-install(TARGETS core cli
+install(TARGETS core cli gui
     RUNTIME DESTINATION .
     LIBRARY DESTINATION .
 )

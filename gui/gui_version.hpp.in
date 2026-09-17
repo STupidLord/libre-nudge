@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 STupidLord
+
+#pragma once
+
+#define LN_GUI_V_MAJOR @GUI_VERSION_MAJOR@
+#define LN_GUI_V_MINOR @GUI_VERSION_MINOR@
+#define LN_GUI_V_PATCH @GUI_VERSION_PATCH@
+
+#define LN_GUI_TM_STR  "Libre Nudge (TM) Graphical User Interface"
+#define LN_GUI_CR_STR  "Copyright (C) 2026 STupidLord"
+#define LN_GUI_GPL_STR "Distributed under GNU General Public License v3.0 or later"
