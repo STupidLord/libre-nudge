@@ -4,8 +4,17 @@
 cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 
 include(FetchContent)
-FetchContent_Declare(glad GIT_REPOSITORY https://github.com/Dav1dde/glad.git GIT_TAG 73db193f853e2ee079bf3ca8a64aa2eaf6459043)
-FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG d9d6f0f1f967807ffade6598ea9a631ebaf37a56)
+FetchContent_Declare(
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG 73db193f853e2ee079bf3ca8a64aa2eaf6459043
+    SOURCE_SUBDIR cmake
+)
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG d9d6f0f1f967807ffade6598ea9a631ebaf37a56
+)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -13,10 +22,6 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(glfw)
 FetchContent_MakeAvailable(glad)
-
-set(GLAD_CLI "${Python_EXECUTABLE}" "${glad_SOURCE_DIR}/glad/__main__.py" CACHE INTERNAL "")
-
-include(${glad_SOURCE_DIR}/cmake/GladConfig.cmake)
 
 glad_add_library(glad_generated STATIC API gl:core=4.6) 
 
