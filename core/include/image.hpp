@@ -105,7 +105,7 @@ const std::array<char, 2> signature{'B', 'M'};
 struct bitmap_file_header {
     std::array<char, 2> signature;
     std::uint32_t       size;
-    // "Reserved"s don't really matter, they doesn't do
+    // "Reserved"s don't really matter, they don't do
     // anything, but might as well parse them properly.
     std::uint16_t       reserved_1;
     std::uint16_t       reserved_2;
@@ -113,6 +113,7 @@ struct bitmap_file_header {
 };
 typedef std::uint32_t bitmap_header_type;
 // BITMAPINFOHEADER
+// TODO: add notes for each property
 struct bitmap_info_header {
     std::uint32_t size;
     std::int32_t  width;
@@ -138,6 +139,6 @@ struct bitmap_rgb_quad {
 
 #pragma pack(pop)
 
-CORE_API void read_bitmap(std::filesystem::path path);
+CORE_API void read_bitmap(std::filesystem::path path, bool flip_vertically);
 }
 }

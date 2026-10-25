@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
     // auto heights = core::load_heightmap(config->config.game_directory, provinces);
     // std::println("2834, 885: {}", heights[885 * 5632 + 2834]);
 
-    core::bitmap::read_bitmap("D:/steamlibrary/steamapps/common/Hearts of Iron IV/map/heightmap.bmp");
+    core::bitmap::read_bitmap("D:/steamlibrary/steamapps/common/Hearts of Iron IV/map/heightmap.bmp", true);
             
     // std::filesystem::path image_path("D:/dev/projects/libre-nudge/examples/pixel_test.bmp");
     // std::unique_ptr<core::image> image = core::image::load_flipped_image(image_path);

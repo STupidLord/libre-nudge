@@ -1,3 +1,4 @@
 # Count resouce.h files properly as Windows resources, not as C Headers
 --count-as "resource.h:Windows Resource-Definition Script"
+-s code
 -p

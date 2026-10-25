@@ -115,14 +115,15 @@ std::ifstream& operator>>(std::ifstream& is, bitmap_rgb_quad& c) {
 //
 // TODO: part of the prior, but implement coverage of
 // the full BMP format
-void read_bitmap(std::filesystem::path path) {
+void read_bitmap(std::filesystem::path path, bool flip_vertically) {
     std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) return;
 
     bitmap_file_header header;
     file.read(reinterpret_cast<char*>(&header), sizeof(bitmap_file_header));
-    if (header.signature != std::array{'B', 'M'}) return;
+    if (header.signature != signature) return;
 
+    // TODO: multiple header types
     bitmap_header_type header_type;
     file.read(reinterpret_cast<char*>(&header_type), sizeof(bitmap_header_type));
     if (header_type != 40) return;
@@ -132,16 +133,61 @@ void read_bitmap(std::filesystem::path path) {
     bitmap_info_header info_header;
     file.read(reinterpret_cast<char*>(&info_header), sizeof(bitmap_info_header));
 
+    // TODO: multiple table sises
     std::size_t table_size{0};
     if (info_header.bit_count == 8) table_size = 256;
+    else return;
  
     std::vector<bitmap_rgb_quad> colors(table_size);
     for (std::size_t i = 0; i < table_size; i++)
         file.read(reinterpret_cast<char*>(&colors[i]), sizeof(bitmap_rgb_quad));
 
+    // FIXME: account for line padding
+    //
+    // FIXME: account for rightside up BMPs (negative height)
+    //
+    // TODO: different indexed levels and non-indexed implementations
+    std::vector<std::uint8_t> pixels(info_header.width * info_header.height);
+    if (flip_vertically) {
+        file.seekg((info_header.height - 1) * info_header.width,
+                   std::ios_base::cur);
+        for (std::size_t y = 0; y < info_header.height; y++) {
+            if (y != 0)
+                file.seekg(-(2 * info_header.width), std::ios_base::cur);
+            for (std::size_t x = 0; x < info_header.width; x++) {
+                file.read(reinterpret_cast<char*>
+                              (&pixels[y * info_header.width + x]),
+                          sizeof(std::uint8_t));
+            }
+        }
+    } else {
+        for (std::size_t y = 0; y < info_header.height; y++) {
+            for (std::size_t x = 0; x < info_header.width; x++) {
+                file.read(reinterpret_cast<char*>
+                              (&pixels[y * info_header.width + x]),
+                          sizeof(std::uint8_t));
+            }
+
+        // for (std::size_t i = 0; i < (info_header.width * info_header.height); i++)
+        //     file.read(reinterpret_cast<char*>(&pixels[i]), sizeof(std::uint8_t));
+        }
+    }
+
     file.close();
 
-    std::println("Test: {}", colors[255].r);
+    // 5073, 6
+    // std::println("Pixel 76, 16: {}", pixels[(76 - 1) + (info_header.width * 16 - 1)]);
+    // std::println("Pixel 76, 16: {}", pixels[2031 * info_header.width + 76]);
+    std::println("Pixel first: {}", pixels[0]);
+    std::println("Pixel first of second row: {}", pixels[1 * info_header.width]);
+    std::println("Pixel second of second row: {}", pixels[1 * info_header.width + 1]);
+    std::println("Pixel first of third row: {}", pixels[2 * info_header.width]);
+    std::println("Pixel first of lower middle row: {}", pixels[(info_header.height / 2) * info_header.width]);
+    std::println("Pixel first of upper middle row: {}", pixels[(info_header.height / 2 + 1) * info_header.width]);
+    std::println("Pixel first of second to last row: {}", pixels[(info_header.height - 2) * info_header.width]);
+    std::println("Pixel first of last row: {}", pixels[(info_header.height - 1) * info_header.width]);
+    std::println("Pixel last of last row: {}", pixels[(info_header.height - 1) * info_header.width + info_header.width - 1]);
+    std::println("2669, 8: {}", pixels[8 * info_header.width + 2669]);
 }
 }
 }
