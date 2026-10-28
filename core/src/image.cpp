@@ -5,6 +5,7 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdlib>
 #include <fstream>
 #include <ios>
 #include <memory>
@@ -17,7 +18,7 @@
 #include "stb_image.h"
 
 namespace core {
-image::~image() { stbi_image_free(this->data); }
+image::~image() { stbi_image_free(this->pixels); }
 
 std::unique_ptr<image> image::load_image(std::filesystem::path path) {
     int x;
@@ -66,7 +67,7 @@ pixel gs_image::get_pixel(int x, int y) {
     if (x > this->get_width() || y > this->get_height()) return pixel();
     int index = (y * this->get_width() + x);
     return pixel(x, y,
-                 this->get_data(index),
+                 this->get_pixels(index),
                  255,
                  0,
                  0);
@@ -76,8 +77,8 @@ pixel gsa_image::get_pixel(int x, int y) {
     if (x > this->get_width() || y > this->get_height()) return pixel();
     int index = (y * this->get_width() + x) * 2;
     return pixel(x, y,
-                 this->get_data(index),
-                 this->get_data(index+1),
+                 this->get_pixels(index),
+                 this->get_pixels(index+1),
                  0,
                  0);
 }
@@ -86,9 +87,9 @@ pixel rgb_image::get_pixel(int x, int y) {
     if (x > this->get_width() || y > this->get_height()) return pixel();
     int index = (y * this->get_width() + x) * 3;
     return pixel(x, y,
-                 this->get_data(index),
-                 this->get_data(index+1),
-                 this->get_data(index+2),
+                 this->get_pixels(index),
+                 this->get_pixels(index+1),
+                 this->get_pixels(index+2),
                  255);
 }
 
@@ -96,10 +97,10 @@ pixel rgba_image::get_pixel(int x, int y) {
     if (x > this->get_width() || y > this->get_height()) return pixel();
     int index = (y * this->get_width() + x) * 4;
     return pixel(x, y,
-                 this->get_data(index),
-                 this->get_data(index+1),
-                 this->get_data(index+2),
-                 this->get_data(index+3));
+                 this->get_pixels(index),
+                 this->get_pixels(index+1),
+                 this->get_pixels(index+2),
+                 this->get_pixels(index+3));
 }
 
 namespace bitmap {
@@ -115,7 +116,8 @@ std::ifstream& operator>>(std::ifstream& is, bitmap_rgb_quad& c) {
 //
 // TODO: part of the prior, but implement coverage of
 // the full BMP format
-void read_bitmap(std::filesystem::path path, bool flip_vertically) {
+void read_bitmap(std::filesystem::path path,
+                 bitmap_flip_vertically flip_vertically) {
     std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) return;
 
@@ -142,13 +144,22 @@ void read_bitmap(std::filesystem::path path, bool flip_vertically) {
     for (std::size_t i = 0; i < table_size; i++)
         file.read(reinterpret_cast<char*>(&colors[i]), sizeof(bitmap_rgb_quad));
 
+    // This feels a little weird, but it's the best way to handle auto
+    bool _flip_vertically;
+    switch (flip_vertically) {
+    case bitmap_flip_vertically::AUTOMATIC:
+        if (info_header.height > 0) _flip_vertically = true;
+        else                        _flip_vertically = false;
+    case bitmap_flip_vertically::YES: _flip_vertically = true;
+    case bitmap_flip_vertically::NO:  _flip_vertically = false;
+    }
+
     // FIXME: account for line padding
     //
-    // FIXME: account for rightside up BMPs (negative height)
-    //
     // TODO: different indexed levels and non-indexed implementations
-    std::vector<std::uint8_t> pixels(info_header.width * info_header.height);
-    if (flip_vertically) {
+    std::vector<std::uint8_t> pixels(info_header.width
+                                     * std::abs(info_header.height));
+    if (_flip_vertically) {
         file.seekg((info_header.height - 1) * info_header.width,
                    std::ios_base::cur);
         for (std::size_t y = 0; y < info_header.height; y++) {
@@ -167,9 +178,6 @@ void read_bitmap(std::filesystem::path path, bool flip_vertically) {
                               (&pixels[y * info_header.width + x]),
                           sizeof(std::uint8_t));
             }
-
-        // for (std::size_t i = 0; i < (info_header.width * info_header.height); i++)
-        //     file.read(reinterpret_cast<char*>(&pixels[i]), sizeof(std::uint8_t));
         }
     }
 

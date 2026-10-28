@@ -33,20 +33,20 @@ class CORE_API image {
 private:
     int            width   {};
     int            height  {};
-    unsigned char* data    {};
+    unsigned char* pixels  {};
     std::uint8_t   channels{};
 
 public:
-    image(int x, int y, unsigned char* d, std::uint8_t c)
-        : width(x), height(y), data(d), channels(c) {};
+    image(int width, int height, unsigned char* pixels, std::uint8_t c)
+        : width(width), height(height), pixels(pixels), channels(c) {};
     virtual ~image(); // Free image data with stbi_image_free()
 
-    int            get_width()         { return this->width; };
-    int            get_height()        { return this->height; };
-    int            get_size()          { return this->width * this->height; };
-    unsigned char* get_data()          { return this->data; };
-    unsigned char  get_data(int index) { return this->data[index]; };
-    std::uint8_t   get_channels()      { return this->channels; };
+    int            get_width()           { return this->width; };
+    int            get_height()          { return this->height; };
+    int            get_size()            { return this->width * this->height; };
+    unsigned char* get_pixels()          { return this->pixels; };
+    unsigned char  get_pixels(int index) { return this->pixels[index]; };
+    std::uint8_t   get_channels()        { return this->channels; };
 
     virtual pixel get_pixel(int x, int y) = 0;
 
@@ -139,6 +139,15 @@ struct bitmap_rgb_quad {
 
 #pragma pack(pop)
 
-CORE_API void read_bitmap(std::filesystem::path path, bool flip_vertically);
+enum bitmap_flip_vertically {
+    NO = 0,
+    YES = 1,
+    AUTOMATIC = 2
+};
+
+// Cursed formatting my beloved
+CORE_API void read_bitmap(std::filesystem::path path,
+                          bitmap_flip_vertically flip_vertically
+                              = bitmap_flip_vertically::AUTOMATIC);
 }
 }
